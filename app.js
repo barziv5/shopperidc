@@ -8,6 +8,8 @@ app.use(express.static(__dirname + '/web'));
 var port = process.env.PORT || 3000;
 var server = app.listen(port);
 
+documnet =
+
 /*console.log('start');
 
 // Connection URL
