@@ -9,24 +9,25 @@ app.use(express.static(__dirname + '/web'));
 var port = process.env.PORT || 3000;
 var server = app.listen(port);
 
-var documnet = {
-    "FirstName": "test3",
-    "LastName": "test3",
-    "email": "test3@gmail.com",
-    "UserName": "test3",
+var document = {
+    "FirstName": "test4",
+    "LastName": "test4",
+    "email": "test4@gmail.com",
+    "UserName": "test4",
     "Password": "1232",
     "UserId": "12345678902",
     "Hobbies": [
         "Sport",
         "tech"
     ]
-}
+};
 
-function insert(collectionName,document){
     mongoaccesslayer.insertDocument('users',document,function(err,data){
-        console.log(err);
-    })
-}
+        if (err == null){
+            console.log(data);
+        }
+
+    });
 
 /*console.log('start');
 
