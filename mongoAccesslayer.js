@@ -3,37 +3,35 @@
  */
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert')
-var ObjectId = require('mongodb').ObjectID;
 
-function Mongoaccesslayer() {
+function MongoAccessLayer() {
     this.url = Object.create(null);
     this.db = Object.create(null);
 };
 
 
-Mongoaccesslayer.prototype.setup = function (url) {
-    Mongoaccesslayer.url = url;
+MongoAccessLayer.prototype.setup = function (url) {
+    MongoAccessLayer.url = url;
 
 };
 
-Mongoaccesslayer.prototype.connect2 = function (callback) {
-    MongoClient.connect(Mongoaccesslayer.url, function (err, db) {
+MongoAccessLayer.prototype.connect2 = function (callback) {
+    MongoClient.connect(MongoAccessLayer.url, function (err, db) {
         assert.equal(null, err);
         console.log("Connected correctly to server");
-        Mongoaccesslayer.db = db;
-        callback(null,db)
-        ;
+        MongoAccessLayer.db = db;
+        callback(null,db);
     });
 
 };
 
-Mongoaccesslayer.prototype.insertDocument = function (collectionName, document, callback) {
-    if ((Mongoaccesslayer.db == undefined) || (Mongoaccesslayer.db == null)) {
+MongoAccessLayer.prototype.insertDocument = function (collectionName, document, callback) {
+    if ((MongoAccessLayer.db == undefined) || (MongoAccessLayer.db == null)) {
         this.connect2(function (err, data) {
             if (err) {
                 callback(err, null);
             } else {
-                Mongoaccesslayer.db.collection(collectionName).insertOne(document, function (err, result) {
+                MongoAccessLayer.db.collection(collectionName).insertOne(document, function (err, result) {
                     assert.equal(err, null);
                     console.log("Inserted a document into the restaurants collection.");
                     callback(data);
@@ -41,7 +39,7 @@ Mongoaccesslayer.prototype.insertDocument = function (collectionName, document, 
             }
         });
     } else {
-        Mongoaccesslayer.db.collection(collectionName).insertOne(document, function (err, result) {
+        MongoAccessLayer.db.collection(collectionName).insertOne(document, function (err, result) {
             assert.equal(err, null);
             console.log("Inserted a document into the restaurants collection.");
             callback(result);
@@ -49,6 +47,6 @@ Mongoaccesslayer.prototype.insertDocument = function (collectionName, document, 
     };
 };
 
-var mongoaccesslayer = new Mongoaccesslayer();
-mongoaccesslayer.setup('mongodb://shopper:idc2015@ds053300.mongolab.com:53300/shopperdb');
-module.exports = mongoaccesslayer;
+var mongoAccessLayer = new MongoAccessLayer();
+mongoAccessLayer.setup('mongodb://shopper:idc2015@ds053300.mongolab.com:53300/shopperdb');
+module.exports = mongoAccessLayer;
