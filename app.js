@@ -11,8 +11,8 @@ app.use(express.static(__dirname + '/web'));
 app.get('/user/:id/:accessToken', function (req, res) {
     if (req.params.id) {
         var params = {
-            fields: ['name', 'first_name', 'last_name', 'email'],
-            accessToken: req.params.accessToken
+            access_token: req.params.accessToken,
+            fields: ['name', 'first_name', 'last_name', 'email']
         };
 
         FB.napi('/' + req.params.id, params, function (err, response) {
