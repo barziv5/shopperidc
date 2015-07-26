@@ -8,7 +8,6 @@ var assert = require('assert')
 function MongoAccessLayer() {
     this.url = Object.create(null);
     this.db = Object.create(null);
-    this.field = null;
 };
 
 
