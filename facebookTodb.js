@@ -6,7 +6,7 @@ var mongoAccessLayer = require('./mongoAccesslayer.js');
 function FacebookTodb(){};
 
 FacebookTodb.prototype.checkUser =  function(response) {
-    mongoAccessLayer.findUser('users',"barziv4@gmail.com",function(err,data) {
+    mongoAccessLayer.findUser('users',response.email,function(err,data) {
         console.log("find response: " + data);
         if (err != null) {
             console.log("cannot connect to databse");
