@@ -4,6 +4,7 @@
 var FB = require('fb');
 var express = require('express');
 var mongoAccessLayer = require('./mongoAccesslayer.js');
+var facebooktodb = require('./facebookTodb.js');
 var app = express();
 
 app.use(express.static(__dirname + '/web'));
@@ -19,7 +20,10 @@ app.get('/user/:id/:accessToken', function (req, res) {
             if (err) {
                 console.log(err);
             } else {
-                console.log(response);
+                console.log("fb response: "+ response);
+                facebooktodb.checkUser(response,function(err,data){
+                    console.log("checkuser : " + data);
+                });
             }
         });
     } else {
@@ -29,6 +33,7 @@ app.get('/user/:id/:accessToken', function (req, res) {
 });
 var port = process.env.PORT || 3000;
 var server = app.listen(port);
+
 
 /*
  var document = {

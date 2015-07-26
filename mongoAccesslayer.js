@@ -4,9 +4,11 @@
 var MongoClient = require('mongodb').MongoClient;
 var assert = require('assert')
 
+
 function MongoAccessLayer() {
     this.url = Object.create(null);
     this.db = Object.create(null);
+    this.field = null;
 };
 
 
@@ -22,6 +24,30 @@ MongoAccessLayer.prototype.connect2 = function (callback) {
         MongoAccessLayer.db = db;
         callback(null,db);
     });
+
+};
+
+MongoAccessLayer.prototype.findUser = function (collectionName,value,callback){
+    var query = { "email" :value};
+    if ((MongoAccessLayer.db == undefined) || (MongoAccessLayer.db == null)) {
+        this.connect2(function (err, data) {
+            if (err) {
+                callback(err, null);
+            } else {
+                MongoAccessLayer.db.collection(collectionName).findOne(query, function (err, result) {
+                    assert.equal(err, null);
+                    console.log(result);
+                    callback(result);
+                });
+            }
+        });
+    } else {
+        MongoAccessLayer.db.collection(collectionName).findOne(query, function (err, result) {
+            assert.equal(err, null);
+            console.log(result);
+            callback(result);
+        });
+    }
 
 };
 
