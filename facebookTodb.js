@@ -6,6 +6,24 @@ var mongoAccessLayer = require('./mongoAccesslayer.js');
 function FacebookTodb() {
 };
 
+FacebookTodb.prototype.validateUser = function (loginInput, callback) {
+
+    //check user according to email
+    mongoAccessLayer.findUser('users', loginInput.user_name, function (err, data) {
+        console.log('find response: ' + data);
+
+        if (err)
+            callback(err, null);
+
+        if (data && (loginInput.password == data.password)) {
+            callback(null, {status: "valid", name: data.FirstName});
+        } else {
+            //user doesn't exist or password is incorrect
+            callback(null, {status: "invalid"});
+        }
+    });
+};
+
 FacebookTodb.prototype.checkUser = function (response, callback) {
 
     //check user according to email

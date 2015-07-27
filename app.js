@@ -5,15 +5,38 @@ var FB = require('fb');
 var express = require('express');
 var facebooktodb = require('./facebookTodb.js');
 var app = express();
-
 app.use(express.static(__dirname + '/web'));
+
+app.post('/login', function (req, res) {
+
+    if (req.params.password && req.params.user_name) {
+        var loginInput = {
+            user_name: req.params.user_name,
+            password: req.params.password
+        };
+
+        facebooktodb.validateUser(loginInput, function (err, data) {
+            if (err) {
+                res.send('check user - error!!');
+
+            } else if (data && data.status == 'valid') {
+                res.send('Welcome ' + data.name);
+            } else {
+                //user not exist or password is incorrect
+                res.send('Please check your input!');
+            }
+        });
+    } else {
+        res.send('403 - invalid request');
+    }
+});
 
 app.get('/user/:id/:accessToken', function (req, res) {
     console.log('requested url: ', req.url);
     if (req.params.id) {
         var params = {
             access_token: req.params.accessToken,
-            fields: ['name', 'first_name', 'last_name', 'email','id']
+            fields: ['name', 'first_name', 'last_name', 'email', 'id']
         };
 
         FB.napi('/' + req.params.id, params, function (err, response) {
@@ -27,7 +50,7 @@ app.get('/user/:id/:accessToken', function (req, res) {
                         res.send('Welcome ' + response.name + ',');
                     } else {
                         facebooktodb.insertUser(response, function (err, data) {
-                            if (err){
+                            if (err) {
                                 res.send('insertUser error!', err);
                             } else {
                                 res.send('Welcome ' + data);
@@ -38,7 +61,7 @@ app.get('/user/:id/:accessToken', function (req, res) {
             }
         });
     } else {
-        res.send('403 - not a valid request!');
+        res.send('403 - invalid request');
     }
 });
 
