@@ -3,24 +3,48 @@
  */
 var mongoAccessLayer = require('./mongoAccesslayer.js');
 
-function FacebookTodb(){};
+function FacebookTodb() {
+};
 
-FacebookTodb.prototype.checkUser =  function(response) {
-    mongoAccessLayer.findUser('users',response.email,function(err,data) {
-        console.log("find response: " + data);
-        if (err != null) {
-            console.log("cannot connect to databse");
-        }else{
-            if (data == undefined){
-                var document = {
-                    "FirstName": response.first_name,
-                    "LastName": response.last_name,
-                    "email": response.email
-                };
-              //  mongoAccessLayer.insertDocument('users',document);
-            }
+FacebookTodb.prototype.checkUser = function (response, callback) {
+
+    //check user according to email
+    mongoAccessLayer.findUser('users', response.email, function (err, data) {
+        console.log('find response: ' + data);
+
+        if (err)
+            callback(err, null);
+
+        if (data) {
+
+            //user exist
+            callback(null, true);
+        } else {
+
+            //user doesn't exist
+            callback(null, false);
         }
     });
+};
+
+FacebookTodb.prototype.insertUser = function (user, callback) {
+    if (user == undefined || user == null) {
+        callback(new EventException('user can not be null'), null);
+    } else {
+        var document = {
+            "FirstName": user.first_name,
+            "LastName": user.last_name,
+            "email": user.email
+        };
+
+        mongoAccessLayer.insertDocument('users', document, function (err, data) {
+            if (err) {
+                callback(err, null);
+            } else {
+                callback(null, data);
+            }
+        });
+    }
 };
 
 var facebookTodb = new FacebookTodb();
