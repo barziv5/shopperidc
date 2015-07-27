@@ -16,55 +16,45 @@ MongoAccessLayer.prototype.setup = function (url) {
 };
 
 MongoAccessLayer.prototype.connect = function (callback) {
-    MongoClient.connect(MongoAccessLayer.url, function (err, db) {
-        assert.equal(null, err);
-        MongoAccessLayer.db = db;
-        callback(null, db);
-    });
-
+    if (MongoAccessLayer.db == null || MongoAccessLayer.db == undefined) {
+        MongoClient.connect(MongoAccessLayer.url, function (err, db) {
+            assert.equal(null, err);
+            MongoAccessLayer.db = db;
+            callback(null, db);
+        });
+    } else {
+        callback(null, MongoAccessLayer.db);
+    }
 };
 
 MongoAccessLayer.prototype.findUser = function (collectionName, value, callback) {
     var query = {"email": value};
-    if ((MongoAccessLayer.db == undefined) || (MongoAccessLayer.db == null)) {
-        this.connect(function (err, db) {
-            if (err) {
-                callback(err, null);
-            } else {
-                db.collection(collectionName).findOne(query, function (err, result) {
-                    assert.equal(err, null);
-                    callback(null, result);
-                });
-            }
-        });
-    } else {
-        MongoAccessLayer.db.collection(collectionName).findOne(query, function (err, result) {
-            assert.equal(err, null);
-            console.log(result);
-            callback(null, result);
-        });
-    }
-
+    this.connect(function (err, db) {
+        if (err) {
+            callback(err, null);
+        } else {
+            db.collection(collectionName).findOne(query, function (err, result) {
+                console.log('findOne result: ', result);
+                assert.equal(err, null);
+                db.close();
+                callback(null, result);
+            });
+        }
+    })
 };
 
 MongoAccessLayer.prototype.insertDocument = function (collectionName, document, callback) {
-    if ((MongoAccessLayer.db == undefined) || (MongoAccessLayer.db == null)) {
-        this.connect(function (err, data) {
-            if (err) {
-                callback(err, null);
-            } else {
-                MongoAccessLayer.db.collection(collectionName).insertOne(document, function (err, result) {
-                    assert.equal(err, null);
-                    callback(null,result);
-                });
-            }
-        });
-    } else {
-        MongoAccessLayer.db.collection(collectionName).insertOne(document, function (err, result) {
-            assert.equal(err, null);
-            callback(null, result);
-        });
-    };
+    this.connect(function (err, db) {
+        if (err) {
+            callback(err, null);
+        } else {
+            db.collection(collectionName).insertOne(document, function (err, result) {
+                assert.equal(err, null);
+                db.close();
+                callback(null, result);
+            });
+        }
+    });
 };
 
 var mongoAccessLayer = new MongoAccessLayer();

@@ -13,7 +13,7 @@ app.get('/user/:id/:accessToken', function (req, res) {
     if (req.params.id) {
         var params = {
             access_token: req.params.accessToken,
-            fields: ['name', 'first_name', 'last_name', 'email']
+            fields: ['name', 'first_name', 'last_name', 'email','id']
         };
 
         FB.napi('/' + req.params.id, params, function (err, response) {
@@ -32,7 +32,7 @@ app.get('/user/:id/:accessToken', function (req, res) {
                             } else {
                                 res.send('Welcome ' + data);
                             }
-                        })
+                        });
                     }
                 });
             }

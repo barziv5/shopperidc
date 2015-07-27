@@ -34,7 +34,8 @@ FacebookTodb.prototype.insertUser = function (user, callback) {
         var document = {
             "FirstName": user.first_name,
             "LastName": user.last_name,
-            "email": user.email
+            "email": user.email,
+            "UserId": user.id
         };
 
         mongoAccessLayer.insertDocument('users', document, function (err, data) {
