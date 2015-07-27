@@ -36,7 +36,11 @@ MongoAccessLayer.prototype.findUser = function (collectionName, value, callback)
             db.collection(collectionName).findOne(query, function (err, result) {
                 console.log('findOne result: ', result);
                 assert.equal(err, null);
-                db.close();
+
+                if (result != null)
+                    db.close();
+
+
                 callback(null, result);
             });
         }
