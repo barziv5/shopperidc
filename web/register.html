@@ -5,28 +5,8 @@
     <title>Register</title>
 </head>
 <body>
-<script>
-    function getUserDetails() {
-        var details = document.getElementById("registerform");
-        // TODO: SEND DETALIS THROUGH HTTP POST
-        console.log('Making an ajax call.... ');
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open('GET', 'http://localhost:3000/user/' + userId + '/' + accessToken, true);
-        xmlhttp.onreadystatechange = function () {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                console.log(xmlhttp.responseText);
-            }
-        };
-
-        xmlhttp.send();
-    }
-</script>
-
-
-
-
 <div id="register">
-    <form id="registerform" method="post" action="/">
+    <form id="registerform" method="post" action="/register/complete">
         <label for="email">Email: </label>
         <input type="text" name="email" id="email">
         <br>

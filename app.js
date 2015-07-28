@@ -3,9 +3,14 @@
  */
 var FB = require('fb');
 var express = require('express');
+var bodyParser = require('body-parser');
+var multer = require('multer');
 var facebooktodb = require('./facebookTodb.js');
 var app = express();
 var mongoAccessLayer = require('./mongoAccesslayer.js');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/web'));
 
 app.post('/login', function (req, res) {
@@ -32,23 +37,37 @@ app.post('/login', function (req, res) {
     }
 });
 
-app.post('/register', function (req, res) {
-    console.log(res);
-    var document = {
-        "FirstName": res.params.firstname,
-        "LastName": res.params.lastname,
-        "email": res.params.email,
-        "Password": res.params.password,
-        "birthyear": res.params.birthyear,
-        "city": res.params.city,
-        "gender":res.params.gender
+app.post('/register/complete', function (req, res) {
+
+    var userDocument = {
+        "FirstName": req.body.firstname,
+        "LastName": req.body.lastname,
+        "email": req.body.email,
+        "Password": req.body.password,
+        "birthyear": req.body.birthyear,
+        "city": req.body.city,
+        "gender": req.body.gender
     };
-/*    mongoAccessLayer.insertDocument('users',document,function(err,data){
-        if (err){
-            console.log("could not create user");
-        }else
-            console.log("new user created");
-    })*/
+
+    facebooktodb.checkUser(userDocument, function (err, data) {
+        if (err) {
+            res.send('check user - error!!');
+        } else if (data) {
+            res.send('User with same email already exist!');
+        } else {
+            mongoAccessLayer.insertDocument('users', userDocument, function (err, data) {
+                if (err) {
+                    console.log("could not create user!");
+                    console.log("error details: ", err);
+                    res.send('error while registration!');
+                } else {
+                    console.log("new user created");
+                    console.log(data);
+                    res.send('registration ended successfully!');
+                }
+            });
+        }
+    });
 });
 
 app.get('/user/:id/:accessToken', function (req, res) {
